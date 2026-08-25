@@ -4,8 +4,7 @@ import {
   IsISO8601,
   IsNotEmpty,
   IsString,
-  Length,
-  Max,
+  MaxLength,
 } from "class-validator";
 
 export enum LogLevel {
@@ -25,12 +24,12 @@ export class Log {
 
   @IsString()
   @IsNotEmpty()
-  @Length(10, 100)
+  @MaxLength(100)
   service: string;
 
   @IsString()
   @IsNotEmpty()
-  @Length(0, 10000)
+  @MaxLength(10000)
   message: string;
 
   constructor(

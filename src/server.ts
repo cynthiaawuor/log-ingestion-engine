@@ -3,14 +3,16 @@ import express from "express";
 import logRouter from "./routes/logs.js";
 import { requireJsonContentType } from "./middleware/contentType.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import { redisTokenBucketLimiter } from "./middleware/ratelimiter/rateLimiter.js";
 
 const app = express();
 app.use(requireJsonContentType);
 app.use(express.json({ limit: "1mb" }));
 
 const PORT = Number(process.env.PORT) || 5000;
+const rateLimit = Number(process.env.RATE_LIMIT ?? 1000);
 
-app.use("/logs", logRouter);
+app.use("/logs", redisTokenBucketLimiter(rateLimit, 0.1), logRouter);
 
 app.use(errorHandler);
 app.listen(PORT, (err) => {
