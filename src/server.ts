@@ -4,6 +4,7 @@ import logRouter from "./routes/logs.js";
 import { requireJsonContentType } from "./middleware/contentType.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { redisTokenBucketLimiter } from "./middleware/ratelimiter/rateLimiter.js";
+import { consumeRawLogs } from "./channel/rawLogsChannel.js";
 
 const app = express();
 app.use(requireJsonContentType);
@@ -15,6 +16,8 @@ const rateLimit = Number(process.env.RATE_LIMIT ?? 1000);
 app.use("/logs", redisTokenBucketLimiter(rateLimit, 0.1), logRouter);
 
 app.use(errorHandler);
+
+consumeRawLogs();
 app.listen(PORT, (err) => {
   if (err) {
     console.log(err);

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { Log } from "../entities/log.js";
 import validate from "../ingestor/validate.js";
+import { enrichLog } from "../enricher/enricher.js";
+import { rawLogsChannel } from "../channel/rawLogsChannel.js";
 
 const logRouter = Router();
 
@@ -22,7 +24,6 @@ logRouter.post("/", async (req, res) => {
   const invalidLogs: { errors: any[]; entry: any }[] = [];
 
   for (let log of logs) {
-    // const logValidationErrors = await validate(log);
     const logEntry = new Log(
       log.timestamp,
       log.level,
@@ -32,14 +33,23 @@ logRouter.post("/", async (req, res) => {
     const logValidationErrors = await validate(logEntry);
 
     if (logValidationErrors.length === 0) {
-      validLogs.push(
-        new Log(log.timestamp, log.level, log.service, log.message),
-      );
+      validLogs.push(logEntry);
     } else {
       invalidLogs.push({ errors: logValidationErrors, entry: log });
     }
   }
 
+  //Enrich each valid log, then push to the channel
+
+  for (const log of validLogs) {
+    const enrichedLog = enrichLog(log, req);
+    console.log({ enrichedLog });
+    const pushedLog = rawLogsChannel.push(enrichedLog);
+
+    if (!pushedLog) {
+      return res.status(503).json({ error: "ingestion overloaded" });
+    }
+  }
   return res.status(202).json({
     status: "accepted",
     batchId: uuid,

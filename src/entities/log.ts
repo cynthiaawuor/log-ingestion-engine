@@ -1,5 +1,4 @@
 import {
-  IsEmail,
   IsEnum,
   IsISO8601,
   IsNotEmpty,
