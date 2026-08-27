@@ -43,7 +43,7 @@ logRouter.post("/", async (req, res) => {
 
   for (const log of validLogs) {
     const enrichedLog = enrichLog(log, req);
-    console.log({ enrichedLog });
+
     const pushedLog = rawLogsChannel.push(enrichedLog);
 
     if (!pushedLog) {
