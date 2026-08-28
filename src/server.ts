@@ -5,6 +5,10 @@ import { requireJsonContentType } from "./middleware/contentType.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { redisTokenBucketLimiter } from "./middleware/ratelimiter/rateLimiter.js";
 import { consumeRawLogs } from "./channel/rawLogsChannel.js";
+import {
+  bindExchangeToQueue,
+  connectRabbitMQ,
+} from "./middleware/rabbitmq/connection.js";
 
 const app = express();
 app.use(requireJsonContentType);
@@ -17,7 +21,13 @@ app.use("/logs", redisTokenBucketLimiter(rateLimit, 0.1), logRouter);
 
 app.use(errorHandler);
 
+const channel = await connectRabbitMQ();
+
+if (channel) {
+  await bindExchangeToQueue(channel);
+}
 consumeRawLogs();
+
 app.listen(PORT, (err) => {
   if (err) {
     console.log(err);

@@ -3,6 +3,7 @@
 import "dotenv/config";
 
 import amqp, { type Channel } from "amqplib";
+import { destinations, ROUTING_KEY } from "./config.js";
 
 const host = process.env.RABBITMQ_HOST ?? "localhost";
 const port = Number(process.env.RABBITMQ_PORT) || 5672;
@@ -21,31 +22,27 @@ export async function connectRabbitMQ() {
     return channel;
   } catch (error) {
     console.warn("RabbitMQ is not avalaible. Using in-memory fallback", error);
-    console.log({ error });
     return null;
   }
 }
+export const channel: Channel | null = await connectRabbitMQ();
 
-const channel: Channel | null = await connectRabbitMQ();
+export const bindExchangeToQueue = async (channel: Channel) => {
+  for (const destination of destinations) {
+    const exchange = destination.exchange;
+    const queue = destination.queue;
 
-const queue = "hello";
-const msg = "Hello world!";
+    await channel.assertExchange(exchange, "direct", {
+      durable: true,
+    });
 
-if (!channel) {
-  console.error("No RabbitMQ channel available, exiting");
-  process.exit(1);
-}
-await channel.assertQueue(queue, {
-  durable: true,
-  arguments: {
-    "x-queue-type": "quorum",
-  },
-});
+    await channel.assertQueue(queue, {
+      durable: true,
+      arguments: {
+        "x-queue-type": "quorum",
+      },
+    });
 
-channel.sendToQueue(queue, Buffer.from(msg));
-console.log(" [x] Sent %s", msg);
-
-setTimeout(function () {
-  channel.close();
-  process.exit(0);
-}, 500);
+    await channel.bindQueue(queue, exchange, ROUTING_KEY);
+  }
+};
