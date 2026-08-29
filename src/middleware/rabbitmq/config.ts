@@ -21,3 +21,7 @@ export const destinations: Destination[] = [
 export const ROUTING_KEY = "log.write";
 
 export const PUBLISH_TIMEOUT_MS = 5000;
+
+export const BATCH_SIZE = 100;
+
+export const BATCH_TIMEOUT = 1000;
