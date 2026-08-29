@@ -3,6 +3,7 @@ import { Log } from "../entities/log.js";
 import validate from "../ingestor/validate.js";
 import { enrichLog } from "../enricher/enricher.js";
 import { rawLogsChannel } from "../channel/rawLogsChannel.js";
+import { metrics } from "../metrics/metrics.js";
 
 const logRouter = Router();
 
@@ -34,6 +35,7 @@ logRouter.post("/", async (req, res) => {
 
     if (logValidationErrors.length === 0) {
       validLogs.push(logEntry);
+      metrics.recordLog(logEntry.level, logEntry.service);
     } else {
       invalidLogs.push({ errors: logValidationErrors, entry: log });
     }

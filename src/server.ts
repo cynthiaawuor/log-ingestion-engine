@@ -9,15 +9,21 @@ import {
   bindExchangeToQueue,
   connectRabbitMQ,
 } from "./middleware/rabbitmq/connection.js";
+import metricsRouter from "./routes/metrics.js";
 
 const app = express();
-app.use(requireJsonContentType);
 app.use(express.json({ limit: "1mb" }));
 
 const PORT = Number(process.env.PORT) || 5000;
 const rateLimit = Number(process.env.RATE_LIMIT ?? 1000);
 
-app.use("/logs", redisTokenBucketLimiter(rateLimit, 0.1), logRouter);
+app.use(
+  "/logs",
+  requireJsonContentType,
+  redisTokenBucketLimiter(rateLimit, 0.1),
+  logRouter,
+);
+app.use("/metrics", metricsRouter);
 
 app.use(errorHandler);
 

@@ -1,4 +1,5 @@
 import type { EnrichedLog } from "../enricher/enricher.js";
+import { metrics } from "../metrics/metrics.js";
 
 const bufferSize = Number(process.env.RAW_LOG_BUFFER_SIZE ?? 10_000);
 
@@ -14,10 +15,13 @@ class RawLogsChannel {
       return false;
     }
     this.queue.push(log);
+    metrics.setQueueBacklog(this.size());
     return true;
   }
   removeLogs(batchSize: number): EnrichedLog[] {
-    return this.queue.splice(0, batchSize);
+    const logs = this.queue.splice(0, batchSize);
+    metrics.setQueueBacklog(this.size());
+    return logs;
   }
   size(): number {
     return this.queue.length;
