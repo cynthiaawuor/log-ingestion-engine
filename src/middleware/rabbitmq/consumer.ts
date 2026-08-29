@@ -36,18 +36,21 @@ export const batchConsumer = (channel: Channel, queue: string) => {
         logsByService[service].push(log);
       }
 
-      // Write to respective databases
+      // Create an array of promises for concurrent database writing/retries
+      const writePromises = [];
       for (const [service, logs] of Object.entries(logsByService)) {
         const db = getDatabaseForService(service);
-        batchWriting(db, logs);
+        writePromises.push(batchWriting(db, logs));
       }
+      // Wait for all DB writes (and potential retries/DLQ dumping) to complete
+      await Promise.all(writePromises);
 
       // If everything succeeds, ACK all messages in this batch
       for (const msg of messagesToProcess) {
         channel.ack(msg);
       }
     } catch (error) {
-      console.error("[-] Batch processing failed:", error);
+      console.error("Batch processing failed:", error);
       // NACK all messages so they return to the queue for a retry
       for (const msg of messagesToProcess) {
         channel.nack(msg, false, true);
