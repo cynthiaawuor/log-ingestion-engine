@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --outDir dist && cp -R client dist/client && mkdir -p dist/src/middleware/ratelimiter && cp src/middleware/ratelimiter/tokenBUcket.lua dist/src/middleware/ratelimiter/tokenBUcket.lua",
+    "start": "node dist/src/server.js",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "load-test": "npm run build && node dist/scripts/load-test.js"
   },
   "keywords": [],
   "author": "",

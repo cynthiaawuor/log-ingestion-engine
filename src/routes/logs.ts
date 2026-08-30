@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Request, type Response } from "express";
 import { Log } from "../entities/log.js";
 import validate from "../ingestor/validate.js";
 import { enrichLog } from "../enricher/enricher.js";
@@ -7,7 +7,7 @@ import { metrics } from "../metrics/metrics.js";
 
 const logRouter = Router();
 
-logRouter.post("/", async (req, res) => {
+export async function handleLogPost(req: Request, res: Response) {
   const logs = req.body;
 
   if (!Array.isArray(logs)) {
@@ -58,6 +58,8 @@ logRouter.post("/", async (req, res) => {
     errors: invalidLogs,
     valid: validLogs,
   });
-});
+}
+
+logRouter.post("/", handleLogPost);
 
 export default logRouter;
