@@ -1,0 +1,138 @@
+:root {
+  color-scheme: dark;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background: #0b1020;
+  color: #eef2ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+.dashboard {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+.page-header,
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+}
+h1,
+h2,
+p {
+  margin: 0;
+}
+h1 {
+  margin-top: 4px;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+h2 {
+  margin-top: 4px;
+  font-size: 1.25rem;
+}
+.eyebrow {
+  color: #94a3b8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.refresh-status,
+.panel-heading > span {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 36px 0 24px;
+}
+.metric-card,
+.services-panel {
+  background: #151c31;
+  border: 1px solid #26314e;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 15%);
+}
+.metric-card {
+  padding: 22px;
+}
+.metric-card p {
+  color: #a5b4cf;
+  font-size: 0.9rem;
+}
+.metric-card strong {
+  display: block;
+  margin: 12px 0 3px;
+  color: #fff;
+  font-size: 1.8rem;
+}
+.metric-card span {
+  color: #7dd3fc;
+  font-size: 0.8rem;
+}
+
+.services-panel {
+  padding: 24px;
+}
+.service-list {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.service-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 0;
+  border-top: 1px solid #26314e;
+}
+.service-list strong {
+  color: #7dd3fc;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.service-list .empty-state {
+  color: #94a3b8;
+  justify-content: center;
+}
+
+@media (max-width: 760px) {
+  .dashboard {
+    padding: 32px 16px;
+  }
+  .page-header,
+  .panel-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+  .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 28px;
+  }
+}
+
+@media (max-width: 420px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}

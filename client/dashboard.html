@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="5" />
+    <title>Log Ingestion Dashboard</title>
+    <link rel="stylesheet" href="/dashboard/styles.css" />
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Log ingestion engine</p>
+          <h1>Dashboard</h1>
+        </div>
+        <p id="refresh-status" class="refresh-status" aria-live="polite">
+          Refreshing every 5 seconds
+        </p>
+      </header>
+
+      <section class="metrics-grid" aria-label="Log metrics">
+        <article class="metric-card">
+          <p>Total logs</p>
+          <strong id="total-logs">—</strong>
+        </article>
+        <article class="metric-card">
+          <p>Throughput</p>
+          <strong id="throughput">—</strong>
+          <span>logs / sec</span>
+        </article>
+        <article class="metric-card">
+          <p>Error rate</p>
+          <strong id="error-rate">—</strong>
+        </article>
+        <article class="metric-card">
+          <p>Queue backlog</p>
+          <strong id="queue-backlog">—</strong>
+          <span>messages waiting</span>
+        </article>
+      </section>
+
+      <section class="services-panel" aria-labelledby="services-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Volume</p>
+            <h2 id="services-heading">Top services</h2>
+          </div>
+          <span>Top 5 by log count</span>
+        </div>
+        <ol id="top-services" class="service-list">
+          <li class="empty-state">Loading service volume…</li>
+        </ol>
+      </section>
+    </main>
+    <script src="/dashboard/script.js"></script>
+  </body>
+</html>
